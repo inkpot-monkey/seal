@@ -236,6 +236,28 @@
       color: var(--ink);
     }
 
+    .avatar-corner {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid var(--rule-light);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      z-index: 10;
+      opacity: 0;
+      transform: scale(0.5);
+      pointer-events: none;
+      transition: opacity 0.35s ease, transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .avatar-corner.visible {
+      opacity: 1;
+      transform: scale(1);
+      pointer-events: auto;
+    }
+
 
 
     /* ═══════════════════════════════════════════════════
@@ -427,6 +449,7 @@
 </head>
 <body>
   <main class="card" id="main-card">
+    <img src="/assets/seal_painter.png" class="avatar-corner" alt="Seal Painter" />
 
     <!-- Left / identity -->
     <header class="identity">
@@ -552,6 +575,20 @@
       document.getElementById(`svc-desc-${i}`).textContent = s.desc;
       document.querySelector(`#service-${ids[i]} img`).alt = s.alt;
     });
+
+    // Double tap Easter egg for avatar
+    let lastTapTime = 0;
+    const avatar = document.querySelector('.avatar-corner');
+    document.addEventListener('touchstart', (e) => {
+      const currentTime = new Date().getTime();
+      const tapLength = currentTime - lastTapTime;
+      
+      if (tapLength > 0 && tapLength < 300) {
+        e.preventDefault(); // prevent default double-tap zoom
+        avatar?.classList.toggle('visible');
+      }
+      lastTapTime = currentTime;
+    }, { passive: false });
   </script>
 </body>
 </html>
