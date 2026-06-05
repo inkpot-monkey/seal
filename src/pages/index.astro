@@ -221,6 +221,10 @@
       padding-top: 20px;
       border-top: 1px solid var(--rule-light);
       text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
       font-size: 8.5px;
       font-weight: 500;
       letter-spacing: 0.16em;
@@ -256,6 +260,34 @@
       opacity: 1;
       transform: scale(1);
       pointer-events: auto;
+    }
+
+    /* ── Language Switcher ── */
+    .lang-switch {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      align-items: center;
+      z-index: 20;
+    }
+    .lang-btn {
+      background: none;
+      border: none;
+      font-family: var(--sans);
+      font-size: 8px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      color: var(--ink-ghost);
+      cursor: pointer;
+      padding: 4px;
+      transition: color 0.2s ease;
+    }
+    .lang-btn:hover, .lang-btn.active {
+      color: var(--ink);
+    }
+    .lang-sep {
+      font-size: 8px;
+      color: var(--rule);
     }
 
 
@@ -415,8 +447,10 @@
         grid-area: footer;
         padding: 14px 44px;
         border-top: 1px solid var(--rule-light);
-        text-align: left;
-        display: block;
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: space-between;
+        align-items: center;
         font-size: 8px;
         letter-spacing: 0.18em;
         color: var(--rule);
@@ -512,6 +546,13 @@
 
     <!-- Footer -->
     <footer class="foot">
+      <div class="lang-switch" id="lang-switch">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <span class="lang-sep">·</span>
+        <button class="lang-btn" data-lang="es">ES</button>
+        <span class="lang-sep">·</span>
+        <button class="lang-btn" data-lang="ca">CA</button>
+      </div>
       <a href="https://palebluebytes.space" target="_blank" rel="noopener noreferrer">Made by palebluebytes.space</a>
     </footer>
 
@@ -554,26 +595,45 @@
       },
     };
 
-    const locale = (() => {
-      const supported = ['ca', 'en', 'es'];
-      for (const l of (navigator.languages ?? [navigator.language ?? 'es'])) {
-        const s = l.slice(0,2).toLowerCase();
-        if (supported.includes(s)) return s;
-      }
-      return 'es';
-    })();
+    let currentLocale = localStorage.getItem('locale');
+    if (!currentLocale) {
+      currentLocale = (() => {
+        const supported = ['ca', 'en', 'es'];
+        for (const l of (navigator.languages ?? [navigator.language ?? 'es'])) {
+          const s = l.slice(0,2).toLowerCase();
+          if (supported.includes(s)) return s;
+        }
+        return 'es';
+      })();
+    }
 
-    const t = T[locale] ?? T.es;
-    document.documentElement.lang = locale;
-    document.title = t.title;
-    document.querySelector('meta[name="description"]')?.setAttribute('content', t.desc);
-    document.getElementById('location-text').textContent = t.location;
-    document.getElementById('wa-cta-text').textContent = t.waCta;
-    const ids = ['montaje','reparaciones','pintura'];
-    t.svcs.forEach((s, i) => {
-      document.getElementById(`svc-name-${i}`).textContent = s.name;
-      document.getElementById(`svc-desc-${i}`).textContent = s.desc;
-      document.querySelector(`#service-${ids[i]} img`).alt = s.alt;
+    function setLanguage(locale) {
+      currentLocale = locale;
+      localStorage.setItem('locale', locale);
+      
+      const t = T[locale] ?? T.es;
+      document.documentElement.lang = locale;
+      document.title = t.title;
+      document.querySelector('meta[name="description"]')?.setAttribute('content', t.desc);
+      document.getElementById('location-text').textContent = t.location;
+      document.getElementById('wa-cta-text').textContent = t.waCta;
+      
+      const ids = ['montaje','reparaciones','pintura'];
+      t.svcs.forEach((s, i) => {
+        document.getElementById(`svc-name-${i}`).textContent = s.name;
+        document.getElementById(`svc-desc-${i}`).textContent = s.desc;
+        document.querySelector(`#service-${ids[i]} img`).alt = s.alt;
+      });
+
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === locale);
+      });
+    }
+
+    setLanguage(currentLocale);
+
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
     });
 
     // Double tap Easter egg for avatar
