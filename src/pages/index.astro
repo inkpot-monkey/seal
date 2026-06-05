@@ -1,0 +1,557 @@
+---
+// Static page — i18n handled client-side via navigator.language
+---
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Montaje, reparaciones y pintura de alta calidad. Contacta por WhatsApp." />
+  <title>Seal Ceada</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Hanken+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:           #1b1c1c;
+      --ink-faint:     #555858;
+      --ink-ghost:     #909393;
+      --paper:         #fbf9f9;
+      --rule:          #d6d5d4;
+      --rule-light:    #e8e7e6;
+      --whatsapp:      #25D366;
+      --whatsapp-deep: #128C7E;
+      --serif: 'Libre Caslon Text', Georgia, serif;
+      --sans:  'Hanken Grotesk', system-ui, sans-serif;
+    }
+
+    html, body { height: 100%; overflow: hidden; }
+
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100dvh;
+      max-height: 100dvh;
+    }
+
+    /* ─── Paper grain overlay ─────────────────────────── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 100;
+      opacity: 0.035;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 180px 180px;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       MOBILE — portrait card, full-height
+    ═══════════════════════════════════════════════════ */
+    .card {
+      width: 100%;
+      max-width: 400px;
+      min-height: 100dvh;
+      max-height: 100dvh;
+      padding: 44px 28px 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      position: relative;
+    }
+
+    /* ── Identity block ── */
+    .identity {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .sc-logo svg {
+      width: 80px;
+      height: auto;
+      overflow: visible;
+      transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .sc-logo:hover svg { transform: rotate(0.8deg) scale(1.03); }
+
+    .brand-name {
+      font-family: var(--serif);
+      font-size: clamp(26px, 7vw, 36px);
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      line-height: 1;
+      color: var(--ink);
+    }
+
+    /* ── WhatsApp ── */
+    .whatsapp-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .whatsapp-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 2px;
+      transition: background 0.25s ease;
+    }
+    .whatsapp-link:hover {
+      background: rgba(37,211,102,0.06);
+    }
+    .whatsapp-link:hover .wa-icon { color: var(--whatsapp-deep); }
+
+    .wa-icon {
+      width: 18px; height: 18px;
+      color: var(--whatsapp);
+      flex-shrink: 0;
+      transition: color 0.25s ease;
+    }
+
+    .wa-number {
+      font-family: var(--serif);
+      font-size: clamp(14px, 4vw, 16px);
+      letter-spacing: 0.1em;
+      color: var(--ink);
+    }
+
+    .wa-cta, .location-tag {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--ink-ghost);
+    }
+
+    /* ── Rule ── */
+    .rule {
+      width: 100%;
+      height: 1px;
+      background: var(--rule-light);
+      flex-shrink: 0;
+    }
+
+    /* ── Services (mobile: vertical list) ── */
+    .services {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      flex: 1;
+    }
+
+    .svc {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 20px;
+      padding: 16px 0;
+      flex: 1;
+      border: none;
+      border-bottom: 1px solid var(--rule-light);
+      border-radius: 0;
+      transition: border-color 0.25s ease;
+      cursor: default;
+    }
+    .svc:last-child { border-bottom: none; }
+    .svc:hover { border-bottom-color: var(--rule); }
+
+    .svc-icon {
+      width: 64px; height: 64px;
+      flex-shrink: 0;
+      object-fit: contain;
+      object-position: left center;
+      opacity: 0.82;
+      transition: opacity 0.25s ease, transform 0.35s cubic-bezier(0.34,1.4,0.64,1);
+    }
+    .svc:hover .svc-icon { opacity: 1; transform: scale(1.04); }
+
+    #service-reparaciones .svc-icon {
+      padding: 8px 8px 8px 0;
+    }
+    #service-pintura .svc-icon {
+      padding: 5px 16px 5px 0;
+    }
+
+    .svc-text {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .svc-name {
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--ink);
+      text-align: left;
+    }
+
+    .svc-desc {
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      color: var(--ink-faint);
+      text-align: left;
+      line-height: 1.5;
+    }
+
+    /* ── Footer ── */
+    .foot {
+      margin-top: auto;
+      width: 100%;
+      padding-top: 20px;
+      border-top: 1px solid var(--rule-light);
+      text-align: center;
+      font-size: 8.5px;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--rule);
+    }
+    .foot a {
+      color: inherit;
+      text-decoration: none;
+      transition: color 0.25s ease;
+    }
+    .foot a:hover {
+      color: var(--ink);
+    }
+
+
+
+    /* ═══════════════════════════════════════════════════
+       DESKTOP — landscape card in space
+    ═══════════════════════════════════════════════════ */
+    @media (min-width: 768px) {
+
+      body {
+        /* Very subtle vignette — card sits on paper */
+        background-image:
+          radial-gradient(ellipse 70% 80% at 50% 50%, transparent 60%, rgba(0,0,0,0.025) 100%);
+      }
+
+      .card {
+        /* Landscape card proportions ~1.75:1 */
+        min-height: unset;
+        max-height: unset;
+        width: min(820px, 88vw);
+        height: min(510px, 85vh);
+        max-width: unset;
+        padding: 0;
+
+        /* Two-column grid */
+        display: grid;
+        grid-template-columns: 1fr 1px 1.45fr;
+        grid-template-rows: minmax(0, 1fr) auto;
+        grid-template-areas:
+          "left  divider  right"
+          "footer footer  footer";
+
+        border: 1px solid var(--rule-light);
+        border-radius: 3px;
+        box-shadow:
+          0 2px 8px rgba(0,0,0,0.04),
+          0 8px 40px rgba(0,0,0,0.05);
+        overflow: hidden;
+      }
+
+      .avatar-corner {
+        display: none;
+      }
+
+      /* Left column — identity */
+      .identity {
+        grid-area: left;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        gap: 20px;
+        padding: 48px 44px;
+        text-align: left;
+        border-right: none; /* divider handles this */
+      }
+
+      .sc-logo svg { width: 96px; }
+
+      .brand-name {
+        font-size: clamp(32px, 3.8vw, 48px);
+        letter-spacing: 0.06em;
+        line-height: 0.95;
+      }
+
+      .whatsapp-block {
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .whatsapp-link {
+        padding: 10px 18px;
+        margin-left: -18px;
+        gap: 10px;
+      }
+
+      .wa-number {
+        font-size: 15px;
+        letter-spacing: 0.12em;
+      }
+
+      /* Vertical divider */
+      .rule {
+        grid-area: divider;
+        width: 1px;
+        height: auto;
+        align-self: stretch;
+        background: var(--rule-light);
+      }
+
+      /* Right column — services */
+      .services {
+        grid-area: right;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        padding: 0 44px;
+        width: auto;
+        height: 100%;
+      }
+
+      /* Horizontal service rows */
+      .svc {
+        flex: 1;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 32px;
+        border: none;
+        border-bottom: 1px solid var(--rule-light);
+        border-radius: 0;
+        text-align: left;
+      }
+      .svc:last-child {
+        border-bottom: none;
+      }
+      .svc:hover {
+        border-bottom-color: var(--rule);
+      }
+
+      .svc-icon {
+        width: 110px; height: 110px;
+        flex-shrink: 0;
+        opacity: 0.82;
+      }
+      .svc:hover .svc-icon { opacity: 1; transform: scale(1.03); }
+
+      #service-reparaciones .svc-icon {
+        padding: 15px 15px 15px 0;
+      }
+      #service-pintura .svc-icon {
+        padding: 10px 30px 10px 0;
+      }
+
+      .svc-text {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .svc-name {
+        font-size: 12px;
+        letter-spacing: 0.18em;
+        text-align: left;
+      }
+
+      .svc-desc {
+        font-size: 13.5px;
+        letter-spacing: 0.03em;
+        color: var(--ink-faint);
+        text-align: left;
+        line-height: 1.5;
+      }
+
+      /* Footer spans full width */
+      .foot {
+        grid-area: footer;
+        padding: 14px 44px;
+        border-top: 1px solid var(--rule-light);
+        text-align: left;
+        display: block;
+        font-size: 8px;
+        letter-spacing: 0.18em;
+        color: var(--rule);
+      }
+    }
+
+    /* ─── Entrance animation ──────────────────────────── */
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes cardIn {
+      from { opacity: 0; transform: scale(0.975); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    /* Mobile: staggered */
+    @media (max-width: 767px) {
+      .identity    { animation: rise 0.5s ease both 0.05s; }
+      .rule        { animation: rise 0.5s ease both 0.2s; }
+      .services    { animation: rise 0.5s ease both 0.3s; }
+      .foot        { animation: rise 0.5s ease both 0.42s; }
+    }
+
+    /* Desktop: card materialises as one */
+    @media (min-width: 768px) {
+      .card { animation: cardIn 0.55s cubic-bezier(0.16,1,0.3,1) both 0.05s; }
+    }
+  </style>
+</head>
+<body>
+  <main class="card" id="main-card">
+
+    <!-- Left / identity -->
+    <header class="identity">
+      <div class="sc-logo" aria-label="Seal Ceada">
+        <svg viewBox="0 0 120 52" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <ellipse cx="60" cy="26" rx="56" ry="22"
+            fill="none" stroke="#1b1c1c" stroke-width="1.1"/>
+          <text x="60" y="31.5" text-anchor="middle"
+            font-family="'Libre Caslon Text', Georgia, serif"
+            font-size="15" font-weight="400" fill="#1b1c1c" letter-spacing="4">SC</text>
+        </svg>
+      </div>
+
+      <h1 class="brand-name">SEAL CEADA</h1>
+
+      <div class="whatsapp-block">
+        <span class="location-tag" id="location-text">Barcelona, España</span>
+        <a href="https://wa.me/34698907808"
+           class="whatsapp-link"
+           id="whatsapp-link"
+           target="_blank"
+           rel="noopener noreferrer"
+           aria-label="698 90 78 08 — WhatsApp">
+          <svg class="wa-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+          </svg>
+          <span class="wa-number">698 90 78 08</span>
+        </a>
+        <span class="wa-cta" id="wa-cta-text">Escríbenos por WhatsApp</span>
+      </div>
+    </header>
+
+    <!-- Divider (horizontal on mobile, vertical on desktop via grid) -->
+    <div class="rule" role="separator" aria-hidden="true"></div>
+
+    <!-- Services -->
+    <section class="services" id="services-grid" aria-label="Servicios">
+      <article class="svc" id="service-montaje">
+        <img class="svc-icon" src="/assets/montaje.png" alt="Montaje" width="56" height="56" loading="eager" />
+        <div class="svc-text">
+          <span class="svc-name" id="svc-name-0">MONTAJE</span>
+          <span class="svc-desc" id="svc-desc-0">Instalación de precisión</span>
+        </div>
+      </article>
+      <article class="svc" id="service-reparaciones">
+        <img class="svc-icon" src="/assets/reparaciones.png" alt="Reparaciones" width="56" height="56" loading="eager" />
+        <div class="svc-text">
+          <span class="svc-name" id="svc-name-1">REPARACIONES</span>
+          <span class="svc-desc" id="svc-desc-1">Diagnóstico y arreglo experto</span>
+        </div>
+      </article>
+      <article class="svc" id="service-pintura">
+        <img class="svc-icon" src="/assets/pintura.png" alt="Pintura" width="56" height="56" loading="eager" />
+        <div class="svc-text">
+          <span class="svc-name" id="svc-name-2">PINTURA</span>
+          <span class="svc-desc" id="svc-desc-2">Acabado fino de interiores</span>
+        </div>
+      </article>
+    </section>
+
+    <!-- Footer -->
+    <footer class="foot">
+      <a href="https://palebluebytes.space" target="_blank" rel="noopener noreferrer">Made by palebluebytes.space</a>
+    </footer>
+
+  </main>
+
+  <script>
+    const T = {
+      es: {
+        title: 'Seal Ceada — Servicios del Hogar',
+        desc: 'Montaje, reparaciones y pintura de alta calidad.',
+        waCta: 'Escríbenos por WhatsApp',
+        location: 'Barcelona, España',
+        svcs: [
+          { name: 'MONTAJE',      desc: 'Instalación de precisión',     alt: 'Montaje' },
+          { name: 'REPARACIONES', desc: 'Diagnóstico y arreglo experto', alt: 'Reparaciones' },
+          { name: 'PINTURA',      desc: 'Acabado fino de interiores',    alt: 'Pintura' },
+        ],
+      },
+      en: {
+        title: 'Seal Ceada — Home Services',
+        desc: 'Premium assembly, repairs and painting.',
+        waCta: 'Message us on WhatsApp',
+        location: 'Barcelona, Spain',
+        svcs: [
+          { name: 'ASSEMBLY', desc: 'Precision installation',          alt: 'Assembly' },
+          { name: 'REPAIRS',  desc: 'Expert fault diagnosis & repair', alt: 'Repairs' },
+          { name: 'PAINTING', desc: 'Fine-finish interior painting',   alt: 'Painting' },
+        ],
+      },
+      ca: {
+        title: 'Seal Ceada — Serveis de la Llar',
+        desc: "Muntatge, reparacions i pintura d'alta qualitat.",
+        waCta: "Escriu-nos per WhatsApp",
+        location: 'Barcelona, Espanya',
+        svcs: [
+          { name: 'MUNTATGE',    desc: "Instal·lació de precisió",      alt: 'Muntatge' },
+          { name: 'REPARACIONS', desc: 'Diagnòstic i reparació expert', alt: 'Reparacions' },
+          { name: 'PINTURA',     desc: "Acabat fi d'interiors",         alt: 'Pintura' },
+        ],
+      },
+    };
+
+    const locale = (() => {
+      const supported = ['ca', 'en', 'es'];
+      for (const l of (navigator.languages ?? [navigator.language ?? 'es'])) {
+        const s = l.slice(0,2).toLowerCase();
+        if (supported.includes(s)) return s;
+      }
+      return 'es';
+    })();
+
+    const t = T[locale] ?? T.es;
+    document.documentElement.lang = locale;
+    document.title = t.title;
+    document.querySelector('meta[name="description"]')?.setAttribute('content', t.desc);
+    document.getElementById('location-text').textContent = t.location;
+    document.getElementById('wa-cta-text').textContent = t.waCta;
+    const ids = ['montaje','reparaciones','pintura'];
+    t.svcs.forEach((s, i) => {
+      document.getElementById(`svc-name-${i}`).textContent = s.name;
+      document.getElementById(`svc-desc-${i}`).textContent = s.desc;
+      document.querySelector(`#service-${ids[i]} img`).alt = s.alt;
+    });
+  </script>
+</body>
+</html>
