@@ -10,6 +10,25 @@
   <meta name="description" content="Montaje, reparaciones y pintura de alta calidad. Contacta por WhatsApp." />
   <title>Seal Ceada</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+  <!-- Open Graph / Facebook / WhatsApp -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={Astro.url.href} />
+  <meta property="og:title" content="Seal Ceada" />
+  <meta property="og:description" content="Montaje, reparaciones y pintura de alta calidad. Contacta por WhatsApp." />
+  <meta property="og:image" content={new URL('/assets/og-image.png', Astro.url).href} />
+  <meta property="og:image:secure_url" content={new URL('/assets/og-image.png', Astro.url).href} />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Seal Ceada" />
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content={Astro.url.href} />
+  <meta property="twitter:title" content="Seal Ceada" />
+  <meta property="twitter:description" content="Montaje, reparaciones y pintura de alta calidad. Contacta por WhatsApp." />
+  <meta property="twitter:image" content={new URL('/assets/og-image.png', Astro.url).href} />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Hanken+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -615,6 +634,13 @@
       document.documentElement.lang = locale;
       document.title = t.title;
       document.querySelector('meta[name="description"]')?.setAttribute('content', t.desc);
+      
+      // Update Open Graph and Twitter metadata client-side
+      document.querySelector('meta[property="og:title"]')?.setAttribute('content', t.title);
+      document.querySelector('meta[property="og:description"]')?.setAttribute('content', t.desc);
+      document.querySelector('meta[property="twitter:title"]')?.setAttribute('content', t.title);
+      document.querySelector('meta[property="twitter:description"]')?.setAttribute('content', t.desc);
+
       document.getElementById('location-text').textContent = t.location;
       document.getElementById('wa-cta-text').textContent = t.waCta;
       
